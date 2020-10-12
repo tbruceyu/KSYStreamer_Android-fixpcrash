@@ -1,0 +1,403 @@
+= 金山云直播推流Android SDK使用说明
+:numbered:
+:toc: left
+:icons: font
+:source-highlighter: pygments
+
+KSY Streamer Android SDK是金山云推出的 Android 平台上使用的软件开发工具包(SDK),帮助开发者快速实现稳定的视频直播的采集和推流功能。
+
+金山云直播SDK是金山云提供的直播解决方案的一部分,完成了Android端音视频数据采集、处理、推流和播放的工作，金山云直播SDK**不限制**用户的推流、拉流地址。用户可以只使用金山云直播SDK而不使用金山云的云服务。
+
+金山云直播SDK不收取任何授权使用费用,不含任何失效时间或者远程下发关闭的后门。同时金山云直播SDK也不要求ak/sk等鉴权,没有任何用户标识信息。
+
+金山云直播SDK提供了业内一流的H.265编码、解码能力,对500+款设备进行了兼容性测试,经受住了大量业内一流的APP长时间线上运行的考验,免费使用,欢迎试用评估。
+
+== 阅读对象
+本文档面向所有使用  https://github.com/ksvc/KSYStreamer_Android[金山云直播SDK]的开发、测试人员等, 要求读者具有一定的Android编程开发经验，并且要求读者具备阅读  https://github.com/ksvc/KSYStreamer_Android/wiki/[wiki]的习惯
+
+== 功能特点
+
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/Streamer_Config_Params#%E7%BC%96%E7%A0%81%E7%B1%BB%E5%9E%8B[支持软编、硬编及软编兼容模式], https://github.com/ksvc/KSYStreamer_Android/wiki/device_config[硬编白名单服务]
+* [x]  https://github.com/ksvc/KSYStreamer_Android/wiki/Streamer_Config_Params#%E8%A7%86%E9%A2%91%E7%A0%81%E7%8E%87%E5%8F%8A%E7%A0%81%E7%8E%87%E8%87%AA%E9%80%82%E5%BA%94[网络自适应]，可根据实际网络情况动态调整目标码率，保证流畅性
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/Streamer_Config_Params#%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81profile%E8%AE%BE%E7%BD%AE[音频编码：AAC(支持LOW、HE、HE_V2)]
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/Streamer_Config_Params#%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E6%A8%A1%E5%BC%8F[视频编码：H.264 / H.265]
+* [x] 推流协议：RTMP
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/Streamer_Config_Params#%E9%A2%84%E8%A7%88%E5%88%86%E8%BE%A8%E7%8E%87[预览与推流分辨率可分别自由设置] (new)
+* [x] **支持通过GLSurfaceView或TextureView进行预览 (new)**
+* [x] 音视频目标码率：可设
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/dynamic_rotate[支持动态横竖屏推流]（new）**
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/Front_Back_Switch[支持后台音频推流、后台音视频正常推流] (new)**
+* [x] 支持前、后置摄像头动态切换
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/front_camera_mirror[前置摄像头镜像功能]
+* [x] 闪光灯：开/关
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/AutoFocus&Zoom[支持触摸对焦（手动对焦）及测光]
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/AutoFocus&Zoom[支持变焦功能] (new)**
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/Video_Filter_Inner[内置美颜功能] (性能大幅提升，软硬编下均有效)**
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/Video_Filter[自定义美颜滤镜] (软硬编下均有效)**
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/Audio_Filter[内置美声]
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/Audio_Filter[自定义音频滤镜] (new)**
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/Audio_Mixer[背景音乐功能], 支持 https://github.com/ksvc/KSYStreamer_Android/wiki/Ear_Mirror[耳返]
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/Audio_Streamer_Only[纯音频推流]**  
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/Audio_Filter[音频升降调](new)**
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/Ear_Mirror[低延迟耳返] (new)**
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/WaterMark[支持图片及时间戳水印]
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/bgp_streaming[背景图推流] (new)**
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/View_Streaming[画笔推流(自定义android.view.View合成推流)] (new)**
+* [x] 开放 https://github.com/ksvc/KSYStreamer_Android/blob/master/src/KSYStreamer.java[KSYStreamer] 类的实现，开发者可自行组装各个模块 (new)
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/liveScene[软编模式下支持场景编码]（new）**
+* [x] https://github.com/ksvc/KSYDiversityLive_Android/tree/master/Agora[连麦]
+* [x] https://github.com/ksvc/KSYDiversityLive_Android/tree/master/KSYScreenStreamer[录屏直播], http://www.bilibili.com/video/av7038614[录屏直播效果]
+* [x] https://github.com/ksvc/KSYDiversityLive_Android/tree/master/KSYPipStreamerAndroid[画中画]  
+* [x] https://github.com/ksvc/KSYDiversityLive_Android/tree/master/KSYStickerAndroid[商汤动态贴纸、手势识别], http://www.bilibili.com/video/av7432197/[动态贴纸效果]    
+* [x] **https://github.com/ksvc/KSYDiversityLive_Android/tree/master/KSYKiwiAndroid[开为大眼瘦脸]（new）**
+* [x] https://github.com/ksvc/KSYDiversityLive_Android/tree/master/KSYFaceunityAndroid[相芯动态贴纸]
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/FloatingView[悬浮窗推流]  
+* [x] **https://github.com/ksvc/KSYMediaEditorKit_Android[短视频编辑] (new) **
+* [x] https://github.com/ksvc/KSYStreamer_Android/wiki/device_config[硬编白名单]
+* [x] **https://github.com/ksvc/KSYStreamer_Android/wiki/Audio_NoiseSuppression[音频降噪](new) **
+* [x] **https://github.com/ksvc/KSYDiversityLive_Android/tree/master/KSYUVCStreamerAndroid[USB摄像头直播](new) **
+
+== 运行环境
+
+* 最低支持版本为Android 4.0 (API level 15)
+* 支持的CPU架构：armv7, arm64, armeabi, x86
+
+.软硬编部分功能对Android系统版本的要求及相关限制
+|===
+|           |软编     |硬编         |软编兼容模式
+|基础推流   |4.4 (19)   |4.3 (18)   |4.0 (15)
+|网络自适应  |4.4 (19)   |4.4 (19)   |4.0 (15)
+|内建美颜滤镜 |所有      |所有         |仅Denoise
+|===
+
+== 版本说明
+=== 迭代
+
+https://github.com/ksvc/KSYStreamer_Android/releases[最新及历史版本]
+
+当前版本为4.x，相对于v3.x有较大的变动，从3.x迁移的用户可参考： +
+https://github.com/ksvc/KSYStreamer_Android/wiki/Trasform_Info[3.x到4.0迁移说明]。
+
+=== 直播SDK
+https://github.com/ksvc/KSYLive_Android/tree/master/libs[KSYLive_Android]集成了  https://github.com/ksvc/KSYMediaPlayer_Android/tree/master/libs_live[libksyplayer]，具有播放SDK直播的所有功能，并且集成了 https://github.com/ksvc/KSYStreamer_Android/tree/master/libs[KSYStreamer]，具有推流SDK所有功能。
+
+如果使用直播推流、播放功能，请使用 https://github.com/ksvc/KSYLive_Android/tree/master/libs[KSYLive_Android] ，无需单独集成 https://github.com/ksvc/KSYStreamer_Android/tree/master/libs[KSYStreamer]。
+
+=== 体系结构
+当前推流  https://github.com/ksvc/KSYStreamer_Android/tree/master/libs[KSYStreamer]支持以下体系结构:
+
+* armeabi
+* armeabi-v7a
+* arm64-v8a
+* x86
+
+为了节省apk size，如果没有特殊缘由，请只集成armeabi-v7a版本。
+----
+只集成armeabi-v7a版本，会导致ARMv5 ARMv6 设备不能运行。如果APP需要适配这两类设备，需要额外集成armebi版本。
+
+ARMv5 ARMv6 设备计算性能较差，金山云不保证该芯片设备上的直播体验。不推荐直播APP视频适配该两款芯片设备。
+----
+
+== 快速集成
+
+本章节提供一个快速集成金山云推流SDK基础功能的示例。 +
+更详细的文档地址：https://github.com/ksvc/KSYStreamer_Android/wiki +
+具体可以参考demo工程中的相应文件。
+
+=== 下载工程
+==== 下载融合库
+**推荐使用融合库**，融合库也会作为重点维护版本。
+
+融合库地址：https://github.com/ksvc/KSYLive_Android  
+
+融合库国内镜像地址：https://git.oschina.net/ksvc/KSYLive_Android
+
+==== 下载单独库
+当前不支持单独推流库下载，请使用融合库：https://github.com/ksvc/KSYLive_Android  
+
+=== 工程目录结构
+
+* demo: 示例工程，演示本SDK主要接口功能的使用
+* libs: 集成SDK需要的所有库文件
+** `libs/[armeabi-v7a|arm64-v8a|x86]`: 各平台的so库
+** `libs/ksylive.jar`: 融合SDK jar包
+
+=== 配置项目
+
+引入目标库, 将libs目录下的库文件引入到目标工程中并添加依赖。
+
+可参考下述配置方式（以Android Studio为例）：
+
+* 导入SDK
+. 推荐直接使用gradle方式集成：
++
+[source, gradle]
+----
+# required
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+dependencies {
+    # required, enough for most devices.
+    compile 'com.ksyun.media:libksylive-java:3.0.0'
+    compile 'com.ksyun.media:libksylive-armv7a:3.0.0'
+
+    # Other ABIs: optional
+    compile 'com.ksyun.media:libksylive-arm64:3.0.0'
+    compile 'com.ksyun.media:libksylive-x86:3.0.0'
+}
+----
++
+. 手动下载集成
+** 将libs目录copy到目标工程的根目录下；
+** 修改目标工程的build.gradle文件，配置jniLibs路径：
++
+[source, gradle]
+----
+sourceSets {
+    main {
+        ...
+        jniLibs.srcDir 'libs'
+    }
+    ...
+}
+----
++
+* 修改proguard(混淆)文件，添加如下规则：
++
+----
+-keep class com.ksyun.** {
+  *;
+}
+
+-keep class com.ksy.statlibrary.** {
+  *;
+}
+----
++
+* 在AndroidManifest.xml文件中申请相应权限
++
+[source, xml]
+----
+<!-- 使用权限 -->
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.READ_PHONE_SINTERNETWIFI_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.FLASHLIGHT" />
+<uses-permission android:name="android.permission.VIBRATE" />
+<!-- 硬件特性 -->
+<uses-feature android:name="android.hardware.camera" />
+<uses-feature android:name="android.hardware.camera.autofocus" />
+----
++
+* 将demo assets目录下的资源文件copy到目标工程的assets目录下
+
+=== 简单推流示例
+
+具体可参考demo工程中的 `com.ksyun.media.streamer.demo.CameraActivity` 类.
+
+. 在布局文件中加入预览View, 当前支持GLSurfaceView和TextureView
++
+[source, xml]
+----
+<android.opengl.GLSurfaceView
+    android:id="@+id/camera_preview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentTop="true" />
+----
++
+. 初始化预览View
++
+[source, java]
+----
+GLSurfaceView mCameraPreview = (GLSurfaceView)findViewById(R.id.camera_preview);
+----
++
+. 创建KSYStreamer实例并配置推流相关参数
++
+[source, java]
+----
+// 创建KSYStreamer实例
+mStreamer = new KSYStreamer(this);
+// 设置预览View
+mStreamer.setDisplayPreview(mCameraPreview);
+// 设置推流url（需要向相关人员申请，测试地址并不稳定！）
+mStreamer.setUrl("rtmp://mobile.kscvbu.cn/live/{streamName}");
+// 设置预览分辨率, 当一边为0时，SDK会根据另一边及实际预览View的尺寸进行计算
+mStreamer.setPreviewResolution(480, 0);
+// 设置推流分辨率，可以不同于预览分辨率（不应大于预览分辨率，否则推流会有画质损失）
+mStreamer.setTargetResolution(480, 0);
+// 设置预览帧率
+mStreamer.setPreviewFps(15);
+// 设置推流帧率，当预览帧率大于推流帧率时，编码模块会自动丢帧以适应设定的推流帧率
+mStreamer.setTargetFps(15);
+// 设置视频码率，分别为初始平均码率、最高平均码率、最低平均码率，单位为kbps，另有setVideoBitrate接口，单位为bps
+mStreamer.setVideoKBitrate(600, 800, 400);
+// 设置音频采样率
+mStreamer.setAudioSampleRate(44100);
+// 设置音频码率，单位为kbps，另有setAudioBitrate接口，单位为bps
+mStreamer.setAudioKBitrate(48);
+/**
+ * 设置编码模式(软编、硬编)，请根据白名单和系统版本来设置软硬编模式，不要全部设成软编或者硬编,白名单可以联系金山云商务:
+ * StreamerConstants.ENCODE_METHOD_SOFTWARE
+ * StreamerConstants.ENCODE_METHOD_HARDWARE
+ */
+mStreamer.setEncodeMethod(StreamerConstants.ENCODE_METHOD_SOFTWARE);
+// 设置屏幕的旋转角度，支持 0, 90, 180, 270
+mStreamer.setRotateDegrees(0);
+// 设置开始预览使用前置还是后置摄像头
+mStreamer.setCameraFacing(CameraCapture.FACING_FRONT);
+----
++
+. 创建推流事件监听
++
+[NOTE]
+====
+所有回调均运行在KSYStreamer的创建线程，建议在主线程中进行，开发者可以直接在回调中操作
+KSYStreamer的相关接口，但不要在这些回调中做任何耗时的操作。
+====
++
+[source, java]
+----
+// 设置Info回调，可以收到相关通知信息
+mStreamer.setOnInfoListener(new KSYStreamer.OnInfoListener() {
+    @Override
+    public void onInfo(int what, int msg1, int msg2) {
+        // ...
+    }
+});
+// 设置错误回调，收到该回调后，一般是发生了严重错误，比如网络断开等，
+// SDK内部会停止推流，APP可以在这里根据回调类型及需求添加重试逻辑。
+mStreamer.setOnErrorListener(new KSYStreamer.OnErrorListener() {
+    @Override
+    public void onError(int what, int msg1, int msg2) {
+        // ...
+    }
+});
+----
++
+. 开始推流
++
+[NOTE]
+====
+初次开启预览后需要在OnInfoListener回调中收到
+StreamerConstants.KSY_STREAMER_CAMERA_INIT_DONE
+事件后调用方才有效。 +
+**（v4.2.1及之后的版本无此限制）**
+====
++
+[source, java]
+----
+mStreamer.startStream();
+----
++
+. 推流开始前及推流过程中可动态设置的常用方法
++
+[source, java]
+----
+// 切换前后摄像头
+mStreamer.switchCamera();
+// 开关闪光灯
+mStreamer.toggleTorch(true);
+// 设置美颜滤镜，关于美颜滤镜的具体说明请参见专题说明
+mStreamer.getImgTexFilterMgt().setFilter(mStreamer.getGLRender(),
+                ImgTexFilterMgt.KSY_FILTER_BEAUTY_DENOISE);
+----
++
+. 停止推流
++
+[source, java]
+----
+mStreamer.stopStream();
+----
++
+. Activity生命周期的回调处理
++
+[source, java]
+----
+public class CameraActivity extends Activity {
+
+    // ...
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 一般可以在onResume中开启摄像头预览
+        mStreamer.startCameraPreview();
+        // 调用KSYStreamer的onResume接口
+        mStreamer.onResume();	
+        // 如果onPause中切到了DummyAudio模块，可以在此恢复
+        mStreamer.setUseDummyAudioCapture(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mStreamer.onPause();
+        // 一般在这里停止摄像头采集
+        mStreamer.stopCameraPreview();
+        // 如果希望App切后台后，停止录制主播端的声音，可以在此切换为DummyAudio采集，
+        // 该模块会代替mic采集模块产生静音数据，同时释放占用的mic资源
+        mStreamer.setUseDummyAudioCapture(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // 清理相关资源
+        mStreamer.release();
+    }
+}
+----
+
+== 更多
+
+* http://ksvc.github.io/KSYStreamer_Android/docs[API接口速查]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/Trasform_Info[3.x到4.0迁移说明]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/Streamer_Config_Params[推流参数设置]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/streamer_start&stop[开始和结束推流]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/Info&Error_Listener[状态和错误回调]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/Restream[异常情况下重连]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/Permission_check[权限检查]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/Audio_Filter[音频滤镜_美声]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/WaterMark[水印]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/AutoFocus&Zoom[手动对焦&变焦]
+* https://github.com/ksvc/KSYStreamer_Android/wiki/front_camera_mirror[前置摄像头镜像]
+
+== https://github.com/ksvc/KSYStreamer_Android/wiki/FAQ[FAQ]
+
+== 反馈与建议
+=== 反馈模板  
+|=====
+| 类型    | 描述
+
+|SDK名称|KSYLive_android
+| SDK版本 | v2.5.0
+| 设备型号  | oppo r9s 
+| OS版本  | Android 6.0.1 
+| 问题描述  | 描述问题出现的现象  
+| 操作描述  | 描述经过如何操作出现上述问题
+| 额外附件   | 文本形式控制台log、crash报告、其他辅助信息（界面截屏或录像等）
+|=====
+
+=== 联系方式
+- 主页： http://www.ksyun.com[金山云]
+- 邮箱： zengfanping@kingsoft.com
+- QQ讨论群：
+  1. 574179720 [视频云技术交流群]
+  1. 620036233 [视频云Android技术交流]
+  1. 以上两个加一个QQ群即可   
+- Issues:  https://github.com/ksvc/KSYStreamer_Android/issues
+
+image::https://raw.githubusercontent.com/wiki/ksvc/KSYLive_Android/images/logo.png[金山云计算, link=http://www.ksyun.com/]
+
