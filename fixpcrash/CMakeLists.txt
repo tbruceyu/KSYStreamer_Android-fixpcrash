@@ -34,7 +34,7 @@ find_library( # Sets the name of the path variable.
         log)
 
 set(3rdparty-libs
-        ${local_src}/jniLibs/armeabi-v7a/libxhook.so
+        ${local_src}/jniLibs/${ANDROID_ABI}/libxhook.so
         )
 include_directories(
         ${local_src}/cpp/include

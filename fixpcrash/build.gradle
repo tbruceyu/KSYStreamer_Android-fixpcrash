@@ -21,9 +21,6 @@ android {
                         "-DANDROID_ARM_NEON=TRUE"
             }
         }
-        ndk {
-            abiFilters "armeabi-v7a"
-        }
     }
 
     buildTypes {
